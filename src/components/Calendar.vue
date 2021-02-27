@@ -9,6 +9,9 @@
 
           <v-btn color="primary" class="mr-4" @click="dialog = true" dark> New Event </v-btn>
 
+          
+
+
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Today </v-btn>
 
 
@@ -34,6 +37,7 @@
               mdi-chevron-right
             </v-icon>
           </v-btn>
+          
           <v-toolbar-title v-if="$refs.calendar">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
@@ -54,6 +58,7 @@
                   mdi-menu-down
                 </v-icon>
               </v-btn>
+              <v-btn color="primary" class="mr-4" @click="dialogLogin = true" dark> Admin </v-btn>
             </template>
             <v-list>
               <v-list-item @click="type = 'day'">
@@ -86,6 +91,17 @@
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
                 create event
               </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogLogin" max-width="500">
+        <v-card>
+          <v-container>
+            <v-form @submit.prevent="login">
+              <v-text-field id="email" type="email" label="Email" v-model="email"></v-text-field>
+              <v-text-field id="password" type="password" label="Password" v-model="password"></v-text-field>
+              <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialogLogin = false">Login</v-btn>
             </v-form>
           </v-container>
         </v-card>
@@ -150,9 +166,18 @@
 
 <script>
 import { db } from '@/main';
+import authAxios from "../auth-axios";
 
 export default {
+  // data(){
+  //     return {
+  //       email: '',
+  //       password: ''
+  //     }
+  //   },
   data: () => ({
+    email: "",
+    password: "",
     today: new Date().toISOString().substr(0),
     focus: new Date().toISOString().substr(0),
     type: "month",
@@ -172,12 +197,26 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     events: [],
-    dialog: false
+    dialog: false,
+    dialogLogin: false
   }),
   mounted() {
     this.getEvents();
   },
   methods: {
+    async login(event) {
+      event.preventDefault();
+      try {
+        let response = await authAxios.post('accounts:signInWithPassword?key=AIzaSyDwCwqeShHe4OSqLC17vkF1haz3Up3O2k4', {
+          email: this.email,
+          password: this.password,
+          returnSecureToken: true
+        });
+        console.log(response);
+      } catch (e) {
+        console.log(e);
+      }
+    },
     async getEvents() {
       let snapshot = await db.collection('Events').get();
       let events = [];
