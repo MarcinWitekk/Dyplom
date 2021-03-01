@@ -2,8 +2,8 @@
   <v-app>
     <v-container>
       <router-link to="/start">Rozpocznij</router-link>
-        <v-btn color="primary" class="ml-4" @click="dialogLogin = true" dark> Admin </v-btn>
-      <router-view/>
+      <v-btn color="primary" v-if="registered == false" class="ml-4" @click="dialogLogin = true" dark> Admin </v-btn>
+      <v-btn color="primary" class="ml-4" v-if="registered == true" @click="logout" dark>Wyloguj</v-btn>
     </v-container>
     <v-dialog v-model="dialogLogin" max-width="500">
       <v-card>
@@ -16,12 +16,15 @@
         </v-container>
       </v-card>
     </v-dialog>
+    <router-view/>
   </v-app>
 </template>
 
 <script>
 // import authAxios from "./auth-axios";
-export default {
+import store from './store/index.js';
+
+export default  {
   name: 'App',
 
   components: {
@@ -32,13 +35,20 @@ export default {
       await this.$store.dispatch('login', {
         email: this.email,
         password: this.password,
+        registered: this.registered.registered,
         returnSecureToken: true
       });
+      this.registered = store.state.registered;
+    },
+    logout() {
+      this.$store.dispatch('logout');
+      this.registered = false;
     },
   },
   data: () => ({
     email: "",
-    password: "",    
+    password: "",
+    registered: false,
     dialogLogin: false
   }),
 };

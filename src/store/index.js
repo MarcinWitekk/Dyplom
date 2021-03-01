@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import authAxios from "../auth-axios";
+import router from "../router/index.js";
 
 Vue.use(Vuex)
 
@@ -8,7 +9,7 @@ export default new Vuex.Store({
   state: {
     token: null,
     userId: null,
-    registered: false
+    registered: false,
   },
   mutations: {
     auth(state, payload) {
@@ -16,6 +17,11 @@ export default new Vuex.Store({
       state.userId = payload.userId;
       state.registered = payload.registered;
     },
+    clearAuth(state) {
+      state.token = null;
+      state.userId = null;
+      state.registered = false;
+    }
   },
   actions: {
     async login({commit}, payload) {
@@ -26,11 +32,18 @@ export default new Vuex.Store({
           userId: response.data.localId,
           registered: response.data.registered
         })
-        console.log(response);
+        // console.log(response);
       } catch (e) {
         console.log(e);
       }
     },    
+    logout({commit}) {
+      commit('clearAuth');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('registered');
+        router.push('/');
+    },
   },
   modules: {
   }
