@@ -8,7 +8,9 @@ import VueAxios from "vue-axios"
 import vuetify from './plugins/vuetify';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import Vuex from 'vuex'
 
+Vue.use(Vuex)
 Vue.config.productionTip = false
 
 firebase.initializeApp({
