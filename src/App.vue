@@ -5,6 +5,7 @@
       <v-btn color="primary" v-if="registered == false" class="ml-4" @click="dialogLogin = true" dark> Admin </v-btn>
       <v-btn color="primary" class="ml-4" v-if="registered == true" @click="logout" dark>Wyloguj</v-btn>
     </v-container>
+     <Calendar :registered = "registered"/>  
     <v-dialog v-model="dialogLogin" max-width="500">
       <v-card>
         <v-container>
@@ -23,11 +24,12 @@
 <script>
 // import authAxios from "./auth-axios";
 import store from './store/index.js';
-
+import Calendar from './components/Calendar';
 export default  {
   name: 'App',
 
   components: {
+    Calendar
   },
   methods: {
     async login(event) {

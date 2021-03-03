@@ -5,6 +5,7 @@
         <v-toolbar
           flat
         >
+        {{registered}}
           <v-btn color="primary" class="mr-4" @click="dialog = true" dark> New Event </v-btn>      
 
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Today </v-btn>
@@ -151,6 +152,7 @@ import { db } from '@/main';
 import authAxios from "../auth-axios";
 
 export default {
+  props: ['registered'],
   data: () => ({
     today: new Date().toISOString().substr(0),
     focus: new Date().toISOString().substr(0),
