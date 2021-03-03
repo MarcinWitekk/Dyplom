@@ -6,7 +6,7 @@
           flat
         >
         {{registered}}
-          <v-btn color="primary" class="mr-4" @click="dialog = true" dark> New Event </v-btn>      
+          <v-btn color="primary" class="mr-4" v-if="registered == true" @click="dialog = true" dark> New Event </v-btn>      
 
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Today </v-btn>
 
@@ -119,7 +119,7 @@
               :color="selectedEvent.color"
               dark
             >
-              <v-btn @click="deleteEvent(selectedEvent.id)" icon>
+              <v-btn v-if="registered == true" @click="deleteEvent(selectedEvent.id)" icon>
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
@@ -135,10 +135,14 @@
                 </textarea-autosize>
               </form>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions v-if="registered == true">
               <v-btn text color="secondary" @click="selectedOpen = false"> Close </v-btn>
-              <v-btn text v-if="currentlyEditing !== selectedEvent.id" @click.prevent="editEvent(selectedEvent)"> Edit </v-btn>
-              <v-btn text v-else @click.prevent="updateEvent(selectedEvent)"> Save </v-btn>
+              <v-btn text  v-if="currentlyEditing !== selectedEvent.id" @click.prevent="editEvent(selectedEvent)"> Edit </v-btn>
+              <v-btn text  v-else @click.prevent="updateEvent(selectedEvent)"> Save </v-btn>
+            </v-card-actions>
+            <v-card-actions v-if="registered == false">
+              <v-btn text color="secondary" @click="selectedOpen = false"> Close </v-btn>
+              <v-btn text> Book </v-btn>
             </v-card-actions>
           </v-card>
         </v-menu>
