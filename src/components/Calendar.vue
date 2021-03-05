@@ -5,10 +5,13 @@
         <v-toolbar
           flat
         >
-        {{registered}}
-          <v-btn color="primary" class="mr-4" v-if="registered == true" @click="dialog = true" dark> New Event </v-btn>      
 
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Today </v-btn>
+        {{registered}}
+
+
+          <v-btn color="primary" class="mr-4" v-if="registered == true" @click="dialog = true" dark> Dodaj termin </v-btn>      
+
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Dzisiaj </v-btn>
 
           <v-btn
             fab
@@ -57,16 +60,16 @@
             </template>
             <v-list>
               <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
+                <v-list-item-title>Dzień</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
+                <v-list-item-title>Tydzień</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
+                <v-list-item-title>Miesiąc</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
+                <v-list-item-title>4 dni</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -78,13 +81,29 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
-              <v-text-field v-model="details" type="text" label="detail"></v-text-field>
-              <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
-              <v-text-field v-model="color" type="color" label="color (click to open color menu)"></v-text-field>
+              <v-text-field v-model="name" type="text" label="Godzina"></v-text-field>
+              <v-text-field v-model="details" type="text" label="Wolne lub zajete"></v-text-field>
+              <v-text-field v-model="start" type="date" label="Data rozpoczęcia"></v-text-field>
+              <v-text-field v-model="end" type="date" label="Data zakończenia"></v-text-field>
+              <!-- <v-text-field v-model="color" type="color" label="color (click to open color menu)"></v-text-field> -->
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
-                create event
+                Stwórz termin
+              </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
+
+      <!-- Book Event -->
+      <v-dialog v-model="bookDialog" max-width="500">
+        <v-card>
+          <v-container>
+            <v-form >
+              <v-text-field v-model="bookName" type="text" label="Imię"></v-text-field>
+              <v-text-field v-model="bookSurname" type="text" label="Nazwisko"></v-text-field>
+              <v-text-field v-model="bookContact" type="text" label="Numer telefonu"></v-text-field>
+              <v-btn type="submit" color="primary" class="mr-4"  @click.prevent="bookEvent(selectedEvent.id)">
+                Zarezerwuj!
               </v-btn>
             </v-form>
           </v-container>
@@ -142,7 +161,7 @@
             </v-card-actions>
             <v-card-actions v-if="registered == false">
               <v-btn text color="secondary" @click="selectedOpen = false"> Close </v-btn>
-              <v-btn text> Book </v-btn>
+              <v-btn @click="bookDialog = true" text> Book </v-btn> 
             </v-card-actions>
           </v-card>
         </v-menu>
@@ -172,12 +191,16 @@ export default {
     start: null,
     end: null,
     color: "#1976D2",
+    bookName: null,
+    bookSurname: null,
+    bookContact: null,
     currentlyEditing: null,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     events: [],
     dialog: false,
+    bookDialog: false,
   }),
   mounted() {
     this.getEvents();
@@ -213,7 +236,7 @@ export default {
       this.getEvents();
     },
     async addEvent() {
-      if ( this.name && this.start && this.end) {
+      if ( this.name && this.start ) {
         await db.collection('Events').add({
           name: this.name,
           details: this.details,
@@ -227,6 +250,23 @@ export default {
         this.start = "";
         this.end = "";
         this.color = "#1976D2";
+
+      } else {
+        alert("Uzupełnij poprawnie dane");
+      }
+    },
+    async bookEvent(ev) {
+
+      console.log(ev);
+      if ( this.bookName && this.bookSurname && this.bookContact) {
+        await db.collection('Events').doc(ev).update({
+          bookName: this.bookName,
+          bookSurname: this.bookSurname,
+          bookContact: this.bookContact,
+        });
+        this.getEvents();
+
+        this.bookDialog = false;
 
       } else {
         alert("Uzupełnij poprawnie dane");

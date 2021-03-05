@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <v-container>
-      <router-link to="/start">Rozpocznij</router-link>
+      <span class="start">
+        <router-link to="/start">Rozpocznij</router-link>
+      </span>
       <v-btn color="primary" v-if="registered == false" class="ml-4" @click="dialogLogin = true" dark> Admin </v-btn>
       <v-btn color="primary" class="ml-4" v-if="registered == true" @click="logout" dark>Wyloguj</v-btn>
     </v-container>
@@ -55,3 +57,8 @@ export default  {
   }),
 };
 </script>
+
+<style scoped lang="less">
+
+
+</style>
