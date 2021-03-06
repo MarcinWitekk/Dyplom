@@ -5,10 +5,6 @@
         <v-toolbar
           flat
         >
-
-        {{registered}}
-
-
           <v-btn color="primary" class="mr-4" v-if="registered == true" @click="dialog = true" dark> Dodaj termin </v-btn>      
 
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Dzisiaj </v-btn>
@@ -77,15 +73,25 @@
       </v-sheet>
 
       <!-- Add Event -->
-      <v-dialog v-model="dialog" max-width="500">
-        <v-card>
+      <v-dialog  v-model="dialog" max-width="700">
+        <v-card class="dodaj-termin">
           <v-container>
             <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="Godzina"></v-text-field>
-              <v-text-field v-model="details" type="text" label="Wolne lub zajete"></v-text-field>
-              <v-text-field v-model="start" type="date" label="Data rozpoczęcia"></v-text-field>
-              <v-text-field v-model="end" type="date" label="Data zakończenia"></v-text-field>
-              <!-- <v-text-field v-model="color" type="color" label="color (click to open color menu)"></v-text-field> -->
+              <!-- <v-text-field v-model="name" type="text" label="Godzina"></v-text-field> -->
+
+              <v-time-picker
+                format="24hr"
+                v-model="name"
+              ></v-time-picker>
+
+              <!-- <v-text-field v-model="start" type="date" label="Data"></v-text-field> -->
+
+                  <v-date-picker
+                    v-model="start"
+                    width="290"
+                    class="mt-4"
+                  ></v-date-picker>
+
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
                 Stwórz termin
               </v-btn>
@@ -147,6 +153,12 @@
             <v-card-text>
               <form v-if="currentlyEditing != selectedEvent.id">
                 {{selectedEvent.details}}
+                <div v-if="registered && this.selectedEvent.details == 'Zarezerwowane'">
+                  <div >Imię: {{selectedEvent.bookName}} </div>
+                  <div >Nazwisko: {{selectedEvent.bookSurname}} </div>
+                  <div>Telefon: {{selectedEvent.bookContact}} </div>
+                </div>
+                
               </form>
               <form v-else>
                 <textarea v-model="selectedEvent.details" type="text" style="width: 100%" :min-height:="100" placeholder="add note">
@@ -155,13 +167,12 @@
               </form>
             </v-card-text>
             <v-card-actions v-if="registered == true">
-              <v-btn text color="secondary" @click="selectedOpen = false"> Close </v-btn>
-              <v-btn text  v-if="currentlyEditing !== selectedEvent.id" @click.prevent="editEvent(selectedEvent)"> Edit </v-btn>
-              <v-btn text  v-else @click.prevent="updateEvent(selectedEvent)"> Save </v-btn>
+              <v-btn text color="secondary" @click="selectedOpen = false"> Zamknij kartę </v-btn>
             </v-card-actions>
             <v-card-actions v-if="registered == false">
-              <v-btn text color="secondary" @click="selectedOpen = false"> Close </v-btn>
-              <v-btn @click="bookDialog = true" text> Book </v-btn> 
+              <v-btn text color="secondary" @click="selectedOpen = false"> Zamknij kartę </v-btn>
+              <v-btn @click="bookDialog = true" v-if="this.selectedEvent.details != 'Zarezerwowane'" text> Umów się </v-btn> 
+              
             </v-card-actions>
           </v-card>
         </v-menu>
@@ -181,9 +192,9 @@ export default {
     focus: new Date().toISOString().substr(0),
     type: "month",
     typeToLabel: {
-      month: "Month",
-      week: "Week",
-      day: "Day",
+      month: "Miesiąc",
+      week: "Tydzień",
+      day: "Dzień",
       "4Day": "4 Days"
     },
     name: null,
@@ -239,8 +250,8 @@ export default {
       if ( this.name && this.start ) {
         await db.collection('Events').add({
           name: this.name,
-          details: this.details,
-          start: this.start,
+          details: "Wolny termin",
+          start: this.start + " " + this.name,
           end: this.end,
           color: this.color
         });
@@ -263,10 +274,12 @@ export default {
           bookName: this.bookName,
           bookSurname: this.bookSurname,
           bookContact: this.bookContact,
-        });
-        this.getEvents();
+          details: "Zarezerwowane",
+          color: "#b3b4b5"
+        });       
 
         this.bookDialog = false;
+        this.getEvents();
 
       } else {
         alert("Uzupełnij poprawnie dane");
@@ -341,3 +354,25 @@ export default {
   },
 };
 </script>
+
+<style  lang="less">
+ .pl-1 {
+   
+   strong {
+    display: block;
+   }
+
+ }
+.dodaj-termin {
+  .container {
+    .v-form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    .v-card.v-picker--date {
+      margin-top: 0 !important;
+    }
+  }
+}
+</style>

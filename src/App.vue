@@ -1,19 +1,23 @@
 <template>
   <v-app>
-    <v-container>
-      <span class="start">
-        <router-link to="/start">Rozpocznij</router-link>
-      </span>
-      <v-btn color="primary" v-if="registered == false" class="ml-4" @click="dialogLogin = true" dark> Admin </v-btn>
-      <v-btn color="primary" class="ml-4" v-if="registered == true" @click="logout" dark>Wyloguj</v-btn>
+    <v-container class="start-box">
+      <!-- <span class="start">
+        <router-link to="">
+          <v-btn color="primary" dark>
+          Wyświetl kalendarz
+          </v-btn>
+        </router-link>
+      </span> -->
+      <v-btn color="primary" v-if="registered == false" @click="dialogLogin = true" dark> Dla administratora </v-btn>
+      <v-btn color="primary" v-if="registered == true" @click="logout" dark>Wyloguj</v-btn>
     </v-container>
      <Calendar :registered = "registered"/>  
     <v-dialog v-model="dialogLogin" max-width="500">
       <v-card>
         <v-container>
           <v-form @submit.prevent="login">
-            <v-text-field id="email" type="email" label="Email" v-model="email"></v-text-field>
-            <v-text-field id="password" type="password" label="Password" v-model="password"></v-text-field>
+            <v-text-field id="email" type="email" label="E-mail" v-model="email"></v-text-field>
+            <v-text-field id="password" type="password" label="Hasło" v-model="password"></v-text-field>
             <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialogLogin = false">Login</v-btn>
           </v-form>
         </v-container>
@@ -58,7 +62,32 @@ export default  {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less">
+.start-box {
+  margin: 0;
+  padding-left: 16px;
+}
+// .start-box {
+//   background: black;
+//   height: 100%;
+//   position: relative;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   z-index: 0;
 
+//   &:before {
+//     position: absolute;
+//     content: " ";
+//     width: 100vw;
+//     height: 100%;
+//     background-color: black;
+//     z-index: -1;
+
+//   }
+// }
+// .row.fill-height {
+//   display: none;
+// }
 
 </style>
