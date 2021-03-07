@@ -107,9 +107,25 @@
             <v-form >
               <v-text-field v-model="bookName" type="text" label="Imię"></v-text-field>
               <v-text-field v-model="bookSurname" type="text" label="Nazwisko"></v-text-field>
-              <v-text-field v-model="bookContact" type="text" label="Numer telefonu"></v-text-field>
+              <v-text-field v-model="bookContact" type="number" label="Numer telefonu"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4"  @click.prevent="bookEvent(selectedEvent.id)">
                 Zarezerwuj!
+              </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
+
+
+      <!-- Back Event -->
+      <v-dialog v-model="backDialog"  max-width="500">
+        <v-card>
+          <v-container>
+            <v-form >
+              <v-text-field v-model="endBook" type="number" label="Podaj swój numer telefonu" autofocus></v-text-field>
+              {{selectedEvent}}
+              <v-btn type="submit" color="primary" class="mr-4" v-if="selectedEvent.bookContact == endBook" @click="usunEvent(selectedEvent.id)">
+                Anuluj swoją wizytę
               </v-btn>
             </v-form>
           </v-container>
@@ -136,6 +152,7 @@
           offset-x
         >
           <v-card
+          
             color="grey lighten-4"
             min-width="350px"
             flat
@@ -172,7 +189,16 @@
             <v-card-actions v-if="registered == false">
               <v-btn text color="secondary" @click="selectedOpen = false"> Zamknij kartę </v-btn>
               <v-btn @click="bookDialog = true" v-if="this.selectedEvent.details != 'Zarezerwowane'" text> Umów się </v-btn> 
-              
+              <!-- <v-btn @click="backDialog = true" v-if="this.selectedEvent.details == 'Zarezerwowane'" text> Anuluj wizytę </v-btn> -->
+
+
+            </v-card-actions>
+            <v-card-actions>
+              <div class="deleteEvent" v-if="this.selectedEvent.details == 'Zarezerwowane'">
+                <div class="deleteEventText">Jeśli chcesz anulować wizytę wpisz poniżej swój numer telefonu</div>
+                <v-text-field v-model="endBook" type="number" label="Podaj swój numer telefonu"></v-text-field>
+                <v-btn @click="usunEvent(selectedEvent.id)" v-if="this.selectedEvent.bookContact == endBook" text> Anuluj wizytę </v-btn>
+              </div>
             </v-card-actions>
           </v-card>
         </v-menu>
@@ -212,6 +238,9 @@ export default {
     events: [],
     dialog: false,
     bookDialog: false,
+    backDialog: false,
+    endBook: null,
+    show: false
   }),
   mounted() {
     this.getEvents();
@@ -242,9 +271,18 @@ export default {
       await db
       .collection('Events')
       .doc(ev)
-      .delete();
+      .delete();     
       this.selectedOpen = false;
       this.getEvents();
+    },
+    async usunEvent(ev) {
+      await db
+      .collection('Events')
+      .doc(ev)
+      .delete(); 
+      this.backDialog = false;
+      this.getEvents();
+      this.selectedOpen = false;
     },
     async addEvent() {
       if ( this.name && this.start ) {
@@ -252,7 +290,7 @@ export default {
           name: this.name,
           details: "Wolny termin",
           start: this.start + " " + this.name,
-          end: this.end,
+          // end: this.end,
           color: this.color
         });
         this.getEvents();
@@ -268,7 +306,6 @@ export default {
     },
     async bookEvent(ev) {
 
-      console.log(ev);
       if ( this.bookName && this.bookSurname && this.bookContact) {
         await db.collection('Events').doc(ev).update({
           bookName: this.bookName,
@@ -277,8 +314,8 @@ export default {
           details: "Zarezerwowane",
           color: "#b3b4b5"
         });       
-
         this.bookDialog = false;
+        location.reload();
         this.getEvents();
 
       } else {
@@ -374,5 +411,19 @@ export default {
       margin-top: 0 !important;
     }
   }
+}
+.deleteEvent {
+  width: 100%;
+  padding: 8px;
+
+    .v-btn {
+    padding: 0 !important;
+  }
+}
+.deleteEventText {
+  width: 90%;
+  font-size: 12px;
+
+
 }
 </style>

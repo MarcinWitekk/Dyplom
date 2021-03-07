@@ -1,13 +1,6 @@
 <template>
   <v-app>
     <v-container class="start-box">
-      <!-- <span class="start">
-        <router-link to="">
-          <v-btn color="primary" dark>
-          Wyświetl kalendarz
-          </v-btn>
-        </router-link>
-      </span> -->
       <v-btn color="primary" v-if="registered == false" @click="dialogLogin = true" dark> Dla administratora </v-btn>
       <v-btn color="primary" v-if="registered == true" @click="logout" dark>Wyloguj</v-btn>
     </v-container>
@@ -51,6 +44,7 @@ export default  {
     logout() {
       this.$store.dispatch('logout');
       this.registered = false;
+      window.location.href = "/";
     },
   },
   data: () => ({
@@ -67,27 +61,5 @@ export default  {
   margin: 0;
   padding-left: 16px;
 }
-// .start-box {
-//   background: black;
-//   height: 100%;
-//   position: relative;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   z-index: 0;
-
-//   &:before {
-//     position: absolute;
-//     content: " ";
-//     width: 100vw;
-//     height: 100%;
-//     background-color: black;
-//     z-index: -1;
-
-//   }
-// }
-// .row.fill-height {
-//   display: none;
-// }
 
 </style>
