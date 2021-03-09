@@ -194,7 +194,7 @@
 
             </v-card-actions>
             <v-card-actions>
-              <div class="deleteEvent" v-if="this.selectedEvent.details == 'Zarezerwowane'">
+              <div class="deleteEvent" v-if="this.selectedEvent.details == 'Zarezerwowane' && registered == false">
                 <div class="deleteEventText">Jeśli chcesz anulować wizytę wpisz poniżej swój numer telefonu</div>
                 <v-text-field v-model="endBook" type="number" label="Podaj swój numer telefonu"></v-text-field>
                 <v-btn @click="usunEvent(selectedEvent.id)" v-if="this.selectedEvent.bookContact == endBook" text> Anuluj wizytę </v-btn>
