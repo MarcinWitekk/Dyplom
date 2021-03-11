@@ -279,10 +279,18 @@ export default {
       await db
       .collection('Events')
       .doc(ev)
-      .delete(); 
+      .update({
+        details: "Wolny termin",
+        bookName: "",
+        bookSurname: "",
+        bookContact: "",
+        color: "#1976D2"
+      }); 
       this.backDialog = false;
-      this.getEvents();
+      
       this.selectedOpen = false;
+      this.getEvents();
+      window.location.href = "/";
     },
     async addEvent() {
       if ( this.name && this.start ) {
