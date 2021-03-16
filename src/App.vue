@@ -16,12 +16,10 @@
         </v-container>
       </v-card>
     </v-dialog>
-    <router-view/>
   </v-app>
 </template>
 
 <script>
-// import authAxios from "./auth-axios";
 import store from './store/index.js';
 import Calendar from './components/Calendar';
 export default  {

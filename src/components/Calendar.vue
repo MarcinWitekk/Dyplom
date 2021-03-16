@@ -77,14 +77,11 @@
         <v-card class="dodaj-termin">
           <v-container>
             <v-form @submit.prevent="addEvent">
-              <!-- <v-text-field v-model="name" type="text" label="Godzina"></v-text-field> -->
 
               <v-time-picker
                 format="24hr"
                 v-model="name"
               ></v-time-picker>
-
-              <!-- <v-text-field v-model="start" type="date" label="Data"></v-text-field> -->
 
                   <v-date-picker
                     v-model="start"
@@ -189,7 +186,6 @@
             <v-card-actions v-if="registered == false">
               <v-btn text color="secondary" @click="selectedOpen = false"> Zamknij kartę </v-btn>
               <v-btn @click="bookDialog = true" v-if="this.selectedEvent.details != 'Zarezerwowane'" text> Umów się </v-btn> 
-              <!-- <v-btn @click="backDialog = true" v-if="this.selectedEvent.details == 'Zarezerwowane'" text> Anuluj wizytę </v-btn> -->
 
 
             </v-card-actions>
@@ -286,8 +282,7 @@ export default {
         bookContact: "",
         color: "#1976D2"
       }); 
-      this.backDialog = false;
-      
+      this.backDialog = false;      
       this.selectedOpen = false;
       this.getEvents();
       window.location.href = "/";
@@ -298,7 +293,6 @@ export default {
           name: this.name,
           details: "Wolny termin",
           start: this.start + " " + this.name,
-          // end: this.end,
           color: this.color
         });
         this.getEvents();
