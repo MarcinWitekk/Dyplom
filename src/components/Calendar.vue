@@ -5,7 +5,12 @@
         <v-toolbar
           flat
         >
-          <v-btn color="primary" class="mr-4" v-if="registered == true" @click="dialog = true" dark> Dodaj termin </v-btn>      
+          <v-btn color="primary" 
+            class="mr-4" 
+            v-if="registered == true" 
+            @click="dialog = true" 
+            dark> Dodaj termin 
+          </v-btn>      
 
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday"> Dzisiaj </v-btn>
 
@@ -121,7 +126,7 @@
             <v-form >
               <v-text-field v-model="endBook" type="number" label="Podaj swój numer telefonu" autofocus></v-text-field>
               {{selectedEvent}}
-              <v-btn type="submit" color="primary" class="mr-4" v-if="selectedEvent.bookContact == endBook" @click="usunEvent(selectedEvent.id)">
+              <v-btn type="submit" color="primary" class="mr-4" v-if="selectedEvent.bookContact == endBook" @click="backEvent(selectedEvent.id)">
                 Anuluj swoją wizytę
               </v-btn>
             </v-form>
@@ -161,6 +166,7 @@
               <v-btn v-if="registered == true" @click="deleteEvent(selectedEvent.id)" icon>
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
+              
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
@@ -180,20 +186,35 @@
                 </textarea-autosize>
               </form>
             </v-card-text>
+
             <v-card-actions v-if="registered == true">
               <v-btn text color="secondary" @click="selectedOpen = false"> Zamknij kartę </v-btn>
             </v-card-actions>
+
             <v-card-actions v-if="registered == false">
-              <v-btn text color="secondary" @click="selectedOpen = false"> Zamknij kartę </v-btn>
-              <v-btn @click="bookDialog = true" v-if="this.selectedEvent.details != 'Zarezerwowane'" text> Umów się </v-btn> 
+              <v-btn 
+                text 
+                color="secondary" 
+                @click="selectedOpen = false"
+              > 
+                Zamknij kartę 
+              </v-btn>
 
-
+              <v-btn 
+                @click="bookDialog = true" 
+                v-if="this.selectedEvent.details != 'Zarezerwowane'" 
+                text
+              > 
+                Umów się 
+              </v-btn> 
             </v-card-actions>
+
             <v-card-actions>
               <div class="deleteEvent" v-if="this.selectedEvent.details == 'Zarezerwowane' && registered == false">
+                
                 <div class="deleteEventText">Jeśli chcesz anulować wizytę wpisz poniżej swój numer telefonu</div>
                 <v-text-field v-model="endBook" type="number" label="Podaj swój numer telefonu"></v-text-field>
-                <v-btn @click="usunEvent(selectedEvent.id)" v-if="this.selectedEvent.bookContact == endBook" text> Anuluj wizytę </v-btn>
+                <v-btn @click="backEvent(selectedEvent.id)" v-if="this.selectedEvent.bookContact == endBook" text> Anuluj wizytę </v-btn>
               </div>
             </v-card-actions>
           </v-card>
@@ -208,7 +229,9 @@ import { db } from '@/main';
 import authAxios from "../auth-axios";
 
 export default {
+
   props: ['registered'],
+
   data: () => ({
     today: new Date().toISOString().substr(0),
     focus: new Date().toISOString().substr(0),
@@ -271,7 +294,7 @@ export default {
       this.selectedOpen = false;
       this.getEvents();
     },
-    async usunEvent(ev) {
+    async backEvent(ev) {
       await db
       .collection('Events')
       .doc(ev)
@@ -307,7 +330,6 @@ export default {
       }
     },
     async bookEvent(ev) {
-
       if ( this.bookName && this.bookSurname && this.bookContact) {
         await db.collection('Events').doc(ev).update({
           bookName: this.bookName,
